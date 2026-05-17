@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"sort"
 	"strings"
 
 	"github.com/septagon-oss/pk-design/pkg/components"
@@ -280,12 +279,7 @@ func lookup[T any](entries map[string]Entry[T], key string) (Entry[T], bool) {
 }
 
 func sortedKeys[T any](in map[string]Entry[T]) []string {
-	keys := make([]string, 0, len(in))
-	for key := range in {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	return keys
+	return slices.Sorted(maps.Keys(in))
 }
 
 func tokenSetEntries(in map[string]Entry[tokens.Set]) []Entry[tokens.Set] {
@@ -588,7 +582,7 @@ func normalizeList(values []string) []string {
 		seen[value] = struct{}{}
 		out = append(out, value)
 	}
-	sort.Strings(out)
+	slices.Sort(out)
 	return out
 }
 

@@ -58,7 +58,8 @@ func expandGroup(set *Set, groupPath string, stack []string) (struct{}, error) {
 		if !strings.HasPrefix(sourceToken, sourcePrefix) {
 			continue
 		}
-		targetToken := targetPrefix + strings.TrimPrefix(sourceToken, sourcePrefix)
+		suffix, _ := strings.CutPrefix(sourceToken, sourcePrefix)
+		targetToken := targetPrefix + suffix
 		if _, exists := set.Values[targetToken]; exists {
 			continue
 		}
@@ -182,7 +183,9 @@ func ParseReference(value string) (string, bool) {
 	if len(value) < 3 || !strings.HasPrefix(value, "{") || !strings.HasSuffix(value, "}") {
 		return "", false
 	}
-	path := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(value, "{"), "}"))
+	path, _ := strings.CutPrefix(value, "{")
+	path, _ = strings.CutSuffix(path, "}")
+	path = strings.TrimSpace(path)
 	if err := validatePath(path, true); err != nil {
 		return "", false
 	}

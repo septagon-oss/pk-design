@@ -8,9 +8,10 @@ package themes
 // Convention: C-10 (shared builders return errors), C-14 (every Go file declares its purpose).
 
 import (
+	"cmp"
 	"fmt"
 	"maps"
-	"sort"
+	"slices"
 
 	"github.com/septagon-oss/pk-design/pkg/tokens"
 )
@@ -71,8 +72,8 @@ func (s Stack) ResolveMode(mode string) (tokens.Set, error) {
 }
 
 func sortTokenLayers(layers []TokenLayer) {
-	sort.SliceStable(layers, func(i, j int) bool {
-		return layerKindRank(layers[i].Kind) < layerKindRank(layers[j].Kind)
+	slices.SortStableFunc(layers, func(a, b TokenLayer) int {
+		return cmp.Compare(layerKindRank(a.Kind), layerKindRank(b.Kind))
 	})
 }
 

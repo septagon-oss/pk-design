@@ -9,7 +9,7 @@ package themes
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/septagon-oss/pk-design/pkg/tokens"
@@ -250,7 +250,7 @@ func normalizeExtends(themeID string, values []string) ([]string, error) {
 		seen[value] = struct{}{}
 		out = append(out, value)
 	}
-	sort.Strings(out)
+	slices.Sort(out)
 	return out, nil
 }
 

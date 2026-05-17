@@ -9,8 +9,9 @@ package components
 // Convention: C-10 (shared builders return errors), C-14 (every Go file declares its purpose).
 
 import (
+	"cmp"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -193,7 +194,7 @@ func normalizeProps(props []Prop) ([]Prop, error) {
 		seen[prop.Name] = struct{}{}
 		out = append(out, prop)
 	}
-	sort.SliceStable(out, func(i, j int) bool { return out[i].Name < out[j].Name })
+	slices.SortStableFunc(out, func(a, b Prop) int { return cmp.Compare(a.Name, b.Name) })
 	return out, nil
 }
 
@@ -215,7 +216,7 @@ func normalizeSlots(slots []Slot) ([]Slot, error) {
 		seen[slot.Name] = struct{}{}
 		out = append(out, slot)
 	}
-	sort.SliceStable(out, func(i, j int) bool { return out[i].Name < out[j].Name })
+	slices.SortStableFunc(out, func(a, b Slot) int { return cmp.Compare(a.Name, b.Name) })
 	return out, nil
 }
 
@@ -249,7 +250,7 @@ func normalizeVariants(variants []Variant) ([]Variant, error) {
 		seen[variant.Name] = struct{}{}
 		out = append(out, variant)
 	}
-	sort.SliceStable(out, func(i, j int) bool { return out[i].Name < out[j].Name })
+	slices.SortStableFunc(out, func(a, b Variant) int { return cmp.Compare(a.Name, b.Name) })
 	return out, nil
 }
 
@@ -330,7 +331,7 @@ func normalizeTokenRefs(values []string) ([]string, error) {
 		seen[value] = struct{}{}
 		out = append(out, value)
 	}
-	sort.Strings(out)
+	slices.Sort(out)
 	return out, nil
 }
 
@@ -422,10 +423,5 @@ func normalizeStringMap(values map[string]string) map[string]string {
 }
 
 func contains(values []string, want string) bool {
-	for _, value := range values {
-		if value == want {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(values, want)
 }

@@ -34,7 +34,7 @@ func normalizeSemverField(source, field, value string) (string, semanticVersion,
 
 func parseSemanticVersion(value string) (semanticVersion, bool) {
 	value = strings.TrimSpace(value)
-	value = strings.TrimPrefix(value, "v")
+	value, _ = strings.CutPrefix(value, "v")
 	if value == "" {
 		return semanticVersion{}, false
 	}
