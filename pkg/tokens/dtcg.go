@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 )
 
@@ -78,6 +79,13 @@ func ParseDTCGJSON(name string, data []byte) (Set, error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 	if err := decoder.Decode(&document); err != nil {
+		return Set{}, err
+	}
+	var trailing any
+	if err := decoder.Decode(&trailing); err != io.EOF {
+		if err == nil {
+			return Set{}, fmt.Errorf("DTCG JSON must contain exactly one document")
+		}
 		return Set{}, err
 	}
 	return ParseDTCG(name, document)

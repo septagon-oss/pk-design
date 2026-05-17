@@ -499,12 +499,16 @@ func copyAny(value any) any {
 		return append(json.RawMessage(nil), typed...)
 	case map[string]any:
 		return copyAnyMap(typed)
+	case map[string]string:
+		return maps.Clone(typed)
 	case []any:
 		out := make([]any, len(typed))
 		for i, child := range typed {
 			out[i] = copyAny(child)
 		}
 		return out
+	case []string:
+		return slices.Clone(typed)
 	default:
 		return typed
 	}

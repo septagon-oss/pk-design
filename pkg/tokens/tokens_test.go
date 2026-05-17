@@ -558,6 +558,9 @@ func TestParseDTCGRejectsInvalidDocuments(t *testing.T) {
 	if _, err := ParseDTCGJSON("pk", []byte("{")); err == nil {
 		t.Fatal("ParseDTCGJSON() should reject invalid JSON")
 	}
+	if _, err := ParseDTCGJSON("pk", []byte(`{"color":{"brand":{"$value":"#2563eb"}}} {}`)); err == nil {
+		t.Fatal("ParseDTCGJSON() should reject trailing JSON documents")
+	}
 }
 
 func TestResolveRejectsInvalidGroupExtends(t *testing.T) {

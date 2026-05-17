@@ -270,7 +270,7 @@ func TestManifestEntriesAreDeterministicDefensiveCopies(t *testing.T) {
 		Add(Contribution{
 			Manifest: Manifest{
 				Source:   "module.zeta",
-				Metadata: map[string]any{"raw": rawMetadata},
+				Metadata: map[string]any{"raw": rawMetadata, "labels": map[string]string{"owner": "design"}, "tags": []string{"homepage"}},
 			},
 			TokenSets: []tokens.Set{testSet("zeta", "#111111")},
 		}).
@@ -290,9 +290,17 @@ func TestManifestEntriesAreDeterministicDefensiveCopies(t *testing.T) {
 	}
 	raw := entries[1].Value.Metadata["raw"].(json.RawMessage)
 	raw[0] = '['
+	entries[1].Value.Metadata["labels"].(map[string]string)["owner"] = "mutated"
+	entries[1].Value.Metadata["tags"].([]string)[0] = "mutated"
 	again := catalog.ManifestEntries()
 	if string(again[1].Value.Metadata["raw"].(json.RawMessage)) != `{"owner":"design"}` {
 		t.Fatalf("ManifestEntries() returned aliased raw metadata: %#v", again[1].Value.Metadata)
+	}
+	if again[1].Value.Metadata["labels"].(map[string]string)["owner"] != "design" {
+		t.Fatalf("ManifestEntries() returned aliased string-map metadata: %#v", again[1].Value.Metadata)
+	}
+	if again[1].Value.Metadata["tags"].([]string)[0] != "homepage" {
+		t.Fatalf("ManifestEntries() returned aliased string-slice metadata: %#v", again[1].Value.Metadata)
 	}
 }
 
