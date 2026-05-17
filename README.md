@@ -4,7 +4,7 @@ Provider-neutral design contracts for the OSS PlatformKit repos.
 
 `pk-design` is intentionally small. It defines the stable design primitives that
 modules, apps, renderers, and Pro distributions can extend without importing
-frontend runtime code or private `septagon-dev` packages.
+frontend runtime code or private product packages.
 
 ## Core Surface
 
@@ -29,7 +29,8 @@ The core packages validate inputs, sort deterministic lists, and return
 defensive copies so downstream extensions cannot mutate shared catalog state.
 
 See [docs/CORE_CONTRACT.md](docs/CORE_CONTRACT.md) for the package boundaries
-and invariants.
+and invariants. `docs/block-manifest.json` is the machine-readable public block
+inventory that CI validates for v0.0.0 release readiness.
 
 ## Verify
 

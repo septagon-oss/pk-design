@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "pk.block-manifest.v1",
+  "repository": "pk-design",
+  "blocks": [
+    {
+      "id": "pk-design.tokens",
+      "kind": "primitive",
+      "owner": "pk-design",
+      "version": "0.0.0",
+      "package": "github.com/septagon-oss/pk-design/pkg/tokens",
+      "status": "composable",
+      "contracts": ["Set", "Value", "Type", "Group", "Report", "DTCG import/export", "CSS export"],
+      "compositionLaws": ["closure", "determinism", "diagnostics"],
+      "extensionPoints": ["token metadata", "group metadata", "aliases", "DTCG extensions"],
+      "evidence": [
+        "pkg/tokens/tokens_test.go",
+        "pkg/tokens/example_test.go"
+      ]
+    },
+    {
+      "id": "pk-design.themes",
+      "kind": "primitive",
+      "owner": "pk-design",
+      "version": "0.0.0",
+      "package": "github.com/septagon-oss/pk-design/pkg/themes",
+      "status": "composable",
+      "contracts": ["Theme", "TokenLayer", "Stack", "ResolveLayers", "ResolveMode"],
+      "compositionLaws": ["identity", "closure", "determinism", "ordered overlay"],
+      "extensionPoints": ["module layer", "app layer", "client layer", "tenant layer", "accessibility layer"],
+      "evidence": [
+        "pkg/themes/themes_test.go",
+        "pkg/themes/example_test.go"
+      ]
+    },
+    {
+      "id": "pk-design.components",
+      "kind": "primitive",
+      "owner": "pk-design",
+      "version": "0.0.0",
+      "package": "github.com/septagon-oss/pk-design/pkg/components",
+      "status": "composable",
+      "contracts": ["Descriptor", "Prop", "Slot", "Variant", "AnatomyNode"],
+      "compositionLaws": ["closure", "determinism", "diagnostics"],
+      "extensionPoints": ["props", "slots", "variants", "anatomy", "required tokens", "metadata"],
+      "evidence": [
+        "pkg/components/components_test.go",
+        "pkg/components/example_test.go"
+      ]
+    },
+    {
+      "id": "pk-design.catalog",
+      "kind": "module-pack",
+      "owner": "pk-design",
+      "version": "0.0.0",
+      "package": "github.com/septagon-oss/pk-design/pkg/catalog",
+      "status": "composable",
+      "contracts": ["Contribution", "Manifest", "Builder", "Catalog", "ConflictPolicy"],
+      "compositionLaws": ["identity", "closure", "determinism", "diagnostics"],
+      "extensionPoints": ["token sets", "themes", "components", "manifests", "conflict policy"],
+      "evidence": [
+        "pkg/catalog/catalog_test.go",
+        "pkg/catalog/example_test.go"
+      ]
+    }
+  ]
+}

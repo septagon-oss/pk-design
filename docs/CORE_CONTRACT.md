@@ -75,3 +75,14 @@ caller intentionally needs explicit ordering.
 These invariants make the package safe for long-lived module ecosystems: a
 module can contribute design data independently, an app can compose it
 deterministically, and each renderer can evolve outside the core.
+
+## Block Manifest
+
+`docs/block-manifest.json` is the machine-readable release inventory for the
+design core. CI validates that every public design block declares identity,
+ownership, version, package, status, contracts, composition laws, extension
+points, and evidence files.
+
+The manifest is intentionally small. It does not try to describe every helper;
+it describes only the public blocks that modules and downstream adapters are
+expected to compose.
