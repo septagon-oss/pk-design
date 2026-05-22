@@ -16,6 +16,10 @@ frontend runtime code or private product packages.
 Renderer adapters, Tailwind config generation, Figma import/export, Storybook
 metadata, and client-specific surfaces belong outside this core.
 
+PlatformKit runtime consumers treat projected `XxxTokens` structs as a public
+visual API. The current runtime contract is documented in
+[`platformkit-frontend-kit/docs/decisions/0003-token-contract-with-pk-design.md`](https://github.com/septagon-dev/platformkit-frontend-kit/blob/main/docs/decisions/0003-token-contract-with-pk-design.md).
+
 ## Extension Model
 
 Modules contribute token sets, themes, and component descriptors through
