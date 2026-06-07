@@ -17,8 +17,11 @@ Renderer adapters, Tailwind config generation, Figma import/export, Storybook
 metadata, and client-specific surfaces belong outside this core.
 
 PlatformKit runtime consumers treat projected `XxxTokens` structs as a public
-visual API. The current runtime contract is documented in
-[`platformkit-frontend-kit/docs/decisions/0003-token-contract-with-pk-design.md`](https://github.com/septagon-dev/platformkit-frontend-kit/blob/main/docs/decisions/0003-token-contract-with-pk-design.md).
+visual API. The OSS contract lives in [docs/CORE_CONTRACT.md](docs/CORE_CONTRACT.md):
+token sets, themes, component descriptors, and catalog contributions. Pro
+renderers (gomponents + HTMX per ADR-0000) project those structs into server
+HTML; that runtime wiring lives downstream in `platformkit-frontend-kit`, not
+in this repo.
 
 ## Extension Model
 
