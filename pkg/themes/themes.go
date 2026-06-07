@@ -33,16 +33,27 @@ type Theme struct {
 // describe the stable composition contract.
 type LayerKind string
 
+// Layer kinds ordered from the most foundational to the most specific override
+// in a PlatformKit design stack.
 const (
-	LayerBase          LayerKind = "base"
-	LayerPrimitive     LayerKind = "primitive"
-	LayerSemantic      LayerKind = "semantic"
-	LayerModule        LayerKind = "module"
-	LayerApp           LayerKind = "app"
-	LayerClient        LayerKind = "client"
-	LayerTenant        LayerKind = "tenant"
+	// LayerBase is the foundational reset/base layer.
+	LayerBase LayerKind = "base"
+	// LayerPrimitive holds raw primitive tokens (e.g. color ramps, scales).
+	LayerPrimitive LayerKind = "primitive"
+	// LayerSemantic maps primitives to semantic roles.
+	LayerSemantic LayerKind = "semantic"
+	// LayerModule contributes module-scoped token overrides.
+	LayerModule LayerKind = "module"
+	// LayerApp contributes application-level overrides.
+	LayerApp LayerKind = "app"
+	// LayerClient contributes client/brand-level overrides.
+	LayerClient LayerKind = "client"
+	// LayerTenant contributes tenant-level overrides.
+	LayerTenant LayerKind = "tenant"
+	// LayerAccessibility contributes accessibility-driven overrides.
 	LayerAccessibility LayerKind = "accessibility"
-	LayerPlatform      LayerKind = "platform"
+	// LayerPlatform contributes platform-wide overrides applied last.
+	LayerPlatform LayerKind = "platform"
 )
 
 // TokenLayer is one token contribution in an ordered theme stack. Mode is optional;

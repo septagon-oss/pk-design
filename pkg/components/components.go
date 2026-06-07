@@ -18,36 +18,56 @@ import (
 // Category describes a component's design-system level.
 type Category string
 
+// Component categories following atomic-design levels plus surface and pattern.
 const (
-	CategoryAtom     Category = "atom"
+	// CategoryAtom is an indivisible primitive component.
+	CategoryAtom Category = "atom"
+	// CategoryMolecule is a small composition of atoms.
 	CategoryMolecule Category = "molecule"
+	// CategoryOrganism is a larger composition of molecules and atoms.
 	CategoryOrganism Category = "organism"
+	// CategoryTemplate is a page-level layout scaffold.
 	CategoryTemplate Category = "template"
-	CategorySurface  Category = "surface"
-	CategoryPattern  Category = "pattern"
+	// CategorySurface is a container or backdrop component.
+	CategorySurface Category = "surface"
+	// CategoryPattern is a reusable interaction or composition pattern.
+	CategoryPattern Category = "pattern"
 )
 
 // SourceOfTruth identifies the visual authority for a component contract.
 type SourceOfTruth string
 
+// Visual authorities a component contract can be sourced from.
 const (
+	// SourceDefinition treats this descriptor as the authoritative definition.
 	SourceDefinition SourceOfTruth = "definition"
-	SourceRuntime    SourceOfTruth = "runtime"
-	SourceStorybook  SourceOfTruth = "storybook"
+	// SourceRuntime defers to the live runtime implementation.
+	SourceRuntime SourceOfTruth = "runtime"
+	// SourceStorybook defers to a Storybook story as the source of truth.
+	SourceStorybook SourceOfTruth = "storybook"
 )
 
 // PropType identifies stable component prop shapes.
 type PropType string
 
+// Supported component prop shapes.
 const (
-	PropString  PropType = "string"
-	PropNumber  PropType = "number"
+	// PropString is a string-valued prop.
+	PropString PropType = "string"
+	// PropNumber is a numeric-valued prop.
+	PropNumber PropType = "number"
+	// PropBoolean is a boolean-valued prop.
 	PropBoolean PropType = "boolean"
-	PropEnum    PropType = "enum"
-	PropObject  PropType = "object"
-	PropArray   PropType = "array"
-	PropNode    PropType = "node"
-	PropToken   PropType = "token"
+	// PropEnum is a prop constrained to declared enum values.
+	PropEnum PropType = "enum"
+	// PropObject is an object-valued prop.
+	PropObject PropType = "object"
+	// PropArray is an array-valued prop.
+	PropArray PropType = "array"
+	// PropNode is a renderable-node prop (e.g. children).
+	PropNode PropType = "node"
+	// PropToken is a prop whose value references a design token.
+	PropToken PropType = "token"
 )
 
 // Prop describes one component property.

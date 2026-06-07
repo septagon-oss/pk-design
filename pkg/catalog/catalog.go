@@ -26,9 +26,13 @@ const ManifestSchemaVersion = "pk.design.contribution.v1"
 // ConflictPolicy controls duplicate contribution keys.
 type ConflictPolicy int
 
+// Conflict policies for duplicate contribution keys.
 const (
+	// ConflictReject fails the build when two contributions share a key.
 	ConflictReject ConflictPolicy = iota
+	// ConflictFirstWins keeps the first contribution and ignores later duplicates.
 	ConflictFirstWins
+	// ConflictLastWins lets later contributions overwrite earlier duplicates.
 	ConflictLastWins
 )
 

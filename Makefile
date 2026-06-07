@@ -1,26 +1,25 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -ec
-
-GO ?= go
 GO_ENV ?= GOWORK=off GOCACHE=$(CURDIR)/.tmp-go-cache GOTMPDIR=$(CURDIR)/.tmp-go-tmp
 STATICCHECK ?= go run honnef.co/go/tools/cmd/staticcheck@latest
 STATICCHECK_CACHE ?= $(CURDIR)/.tmp-staticcheck-cache
+TMPDIRS := .tmp-go-cache .tmp-go-tmp .tmp-staticcheck-cache
 
-.PHONY: test vet staticcheck race cover verify
+.PHONY: test vet staticcheck race verify
 
-test:
-	$(GO_ENV) $(GO) test ./...
+$(TMPDIRS):
+	@mkdir -p $@
 
-vet:
-	$(GO_ENV) $(GO) vet ./...
+test: | $(TMPDIRS)
+	$(GO_ENV) go test ./...
 
-staticcheck:
+vet: | $(TMPDIRS)
+	$(GO_ENV) go vet ./...
+
+staticcheck: | $(TMPDIRS)
 	XDG_CACHE_HOME=$(STATICCHECK_CACHE) $(GO_ENV) GOFLAGS=-buildvcs=false $(STATICCHECK) ./...
 
-race:
-	$(GO_ENV) $(GO) test -race -count=1 ./...
-
-cover:
-	$(GO_ENV) $(GO) test -cover ./...
+race: | $(TMPDIRS)
+	$(GO_ENV) go test -race -count=1 ./...
 
 verify: test vet staticcheck race
