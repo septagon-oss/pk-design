@@ -136,7 +136,8 @@ func TestCSSVars(t *testing.T) {
 func TestResolveModeAppliesGlobalAndMatchingLayers(t *testing.T) {
 	t.Parallel()
 
-	resolved, err := ResolveMode("dark",
+	resolved, err := ResolveMode(
+		"dark",
 		TokenLayer{
 			ID:   "base",
 			Kind: LayerBase,
