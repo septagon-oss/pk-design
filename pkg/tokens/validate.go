@@ -3,8 +3,9 @@ package tokens
 // validate.go owns structural validation and canonical normalization for token
 // sets before composition, resolution, or export.
 //
-// ADR: ADR-0029 (file purpose declaration).
-// Convention: C-10 (shared builders return errors), C-14 (every Go file declares its purpose).
+// Implements: REQ-011.
+// Per: ADR-0029 (file purpose declaration); C-10 (shared builders return errors).
+// Discipline: C-14.
 
 import (
 	"encoding/json"
@@ -32,11 +33,11 @@ func normalize(s Set) (Set, Report) {
 		Types:        map[string]Type{},
 		Descriptions: map[string]string{},
 		Extensions:   map[string]map[string]any{},
-		Deprecated:   map[string]any{},
 		Groups:       map[string]Group{},
 		Metadata:     normalizeAnyMap(s.Metadata),
 	}
-	for rawPath, rawValue := range s.Values {
+	for _, rawPath := range sortedMapKeys(s.Values) {
+		rawValue := s.Values[rawPath]
 		path := strings.TrimSpace(rawPath)
 		if err := validatePath(path, true); err != nil {
 			report.Add(IssueInvalidPath, SeverityError, path, err.Error())
@@ -56,8 +57,8 @@ func normalize(s Set) (Set, Report) {
 	normalizeTypes(&report, out.Values, out.Types, s.Types, "token type")
 	normalizeDescriptions(&report, out.Values, out.Descriptions, s.Descriptions, "token description")
 	normalizeExtensions(&report, out.Values, out.Extensions, s.Extensions, "token extension")
-	normalizeDeprecated(&report, out.Values, out.Deprecated, s.Deprecated)
-	for rawPath, rawGroup := range s.Groups {
+	for _, rawPath := range sortedMapKeys(s.Groups) {
+		rawGroup := s.Groups[rawPath]
 		path := strings.TrimSpace(rawPath)
 		if err := validatePath(path, false); err != nil {
 			report.Add(IssueInvalidGroup, SeverityError, path, fmt.Sprintf("group path: %v", err))
@@ -90,7 +91,8 @@ func normalize(s Set) (Set, Report) {
 }
 
 func normalizeTypes(report *Report, values map[string]Value, out map[string]Type, in map[string]Type, label string) {
-	for rawPath, tokenType := range in {
+	for _, rawPath := range sortedMapKeys(in) {
+		tokenType := in[rawPath]
 		path := strings.TrimSpace(rawPath)
 		if err := validatePath(path, true); err != nil {
 			report.Add(IssueInvalidPath, SeverityError, path, fmt.Sprintf("%s path: %v", label, err))
@@ -115,7 +117,8 @@ func normalizeTypes(report *Report, values map[string]Value, out map[string]Type
 }
 
 func normalizeDescriptions(report *Report, values map[string]Value, out map[string]string, in map[string]string, label string) {
-	for rawPath, description := range in {
+	for _, rawPath := range sortedMapKeys(in) {
+		description := in[rawPath]
 		path := strings.TrimSpace(rawPath)
 		if err := validatePath(path, true); err != nil {
 			report.Add(IssueInvalidPath, SeverityError, path, fmt.Sprintf("%s path: %v", label, err))
@@ -136,7 +139,8 @@ func normalizeDescriptions(report *Report, values map[string]Value, out map[stri
 }
 
 func normalizeExtensions(report *Report, values map[string]Value, out map[string]map[string]any, in map[string]map[string]any, label string) {
-	for rawPath, extensions := range in {
+	for _, rawPath := range sortedMapKeys(in) {
+		extensions := in[rawPath]
 		path := strings.TrimSpace(rawPath)
 		if err := validatePath(path, true); err != nil {
 			report.Add(IssueInvalidPath, SeverityError, path, fmt.Sprintf("%s path: %v", label, err))
@@ -156,23 +160,6 @@ func normalizeExtensions(report *Report, values map[string]Value, out map[string
 	}
 }
 
-func normalizeDeprecated(report *Report, values map[string]Value, out map[string]any, in map[string]any) {
-	for rawPath, deprecated := range in {
-		path := strings.TrimSpace(rawPath)
-		if err := validatePath(path, true); err != nil {
-			report.Add(IssueInvalidPath, SeverityError, path, fmt.Sprintf("token deprecated path: %v", err))
-			continue
-		}
-		if _, exists := values[path]; !exists {
-			report.Add(IssueUnknownMetadataPath, SeverityError, path, fmt.Sprintf("token deprecated references unknown token %q", path))
-			continue
-		}
-		if deprecated != nil {
-			out[path] = deepCopyValue(deprecated)
-		}
-	}
-}
-
 func trimEmptyOptionalMaps(out *Set) {
 	if len(out.Types) == 0 {
 		out.Types = nil
@@ -182,9 +169,6 @@ func trimEmptyOptionalMaps(out *Set) {
 	}
 	if len(out.Extensions) == 0 {
 		out.Extensions = nil
-	}
-	if len(out.Deprecated) == 0 {
-		out.Deprecated = nil
 	}
 	if len(out.Groups) == 0 {
 		out.Groups = nil

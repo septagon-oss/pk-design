@@ -54,7 +54,7 @@
       "version": "0.0.0",
       "package": "github.com/septagon-oss/pk-design/pkg/catalog",
       "status": "composable",
-      "contracts": ["Contribution", "Manifest", "Builder", "Catalog", "ConflictPolicy"],
+      "contracts": ["Contribution", "Manifest", "Builder", "Catalog"],
       "compositionLaws": ["identity", "closure", "determinism", "diagnostics"],
       "extensionPoints": ["token sets", "themes", "components", "manifests", "conflict policy"],
       "evidence": [

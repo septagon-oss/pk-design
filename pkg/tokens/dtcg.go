@@ -56,9 +56,6 @@ func DTCG(set Set) (map[string]any, error) {
 		if ext := normalized.Extensions[path]; len(ext) > 0 {
 			leaf["$extensions"] = normalizeAnyMap(ext)
 		}
-		if deprecated := normalized.Deprecated[path]; deprecated != nil {
-			leaf["$deprecated"] = deepCopyValue(deprecated)
-		}
 		cursor[segments[len(segments)-1]] = leaf
 	}
 	return document, nil
@@ -99,7 +96,6 @@ func ParseDTCG(name string, document map[string]any) (Set, error) {
 		Types:        map[string]Type{},
 		Descriptions: map[string]string{},
 		Extensions:   map[string]map[string]any{},
-		Deprecated:   map[string]any{},
 		Groups:       map[string]Group{},
 	}
 	if err := parseDTCGGroup(&set, nil, document, Group{}); err != nil {
@@ -112,6 +108,14 @@ func parseDTCGGroup(set *Set, path []string, object map[string]any, inherited Gr
 	effective := inherited
 	current := Group{}
 	groupPath := strings.Join(path, ".")
+	if _, exists := object["$deprecated"]; exists {
+		return Report{Issues: []Issue{{
+			Code:     IssueInvalidDTCG,
+			Severity: SeverityError,
+			Path:     groupPath,
+			Message:  "$deprecated metadata is not supported; remove obsolete tokens",
+		}}}
+	}
 	if tokenValue, isToken := object["$value"]; isToken {
 		for key := range object {
 			if !strings.HasPrefix(key, "$") {
@@ -132,9 +136,6 @@ func parseDTCGGroup(set *Set, path []string, object map[string]any, inherited Gr
 		}
 		if extensions, ok := mapField(object, "$extensions"); ok {
 			set.Extensions[groupPath] = extensions
-		}
-		if deprecated, ok := object["$deprecated"]; ok {
-			set.Deprecated[groupPath] = deepCopyValue(deprecated)
 		}
 		return nil
 	}

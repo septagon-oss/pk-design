@@ -120,7 +120,6 @@ func copyTokenSet(set tokens.Set) tokens.Set {
 		Types:        maps.Clone(set.Types),
 		Descriptions: maps.Clone(set.Descriptions),
 		Extensions:   copyNestedAnyMap(set.Extensions),
-		Deprecated:   copyAnyMap(set.Deprecated),
 		Groups:       copyGroups(set.Groups),
 		Metadata:     copyAnyMap(set.Metadata),
 	}

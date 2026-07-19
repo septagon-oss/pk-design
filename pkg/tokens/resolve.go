@@ -97,12 +97,6 @@ func copyTokenMetadata(set *Set, sourceToken, targetToken string) {
 		}
 		set.Extensions[targetToken] = normalizeAnyMap(value)
 	}
-	if value, ok := set.Deprecated[sourceToken]; ok {
-		if set.Deprecated == nil {
-			set.Deprecated = map[string]any{}
-		}
-		set.Deprecated[targetToken] = deepCopyValue(value)
-	}
 }
 
 func hasGroup(set *Set, groupPath string) bool {

@@ -119,7 +119,6 @@ type Token struct {
 	Value       Value          `json:"value"`
 	Description string         `json:"description,omitempty"`
 	Extensions  map[string]any `json:"extensions,omitempty"`
-	Deprecated  any            `json:"deprecated,omitempty"`
 }
 
 // Group describes DTCG group-level metadata.
@@ -140,7 +139,6 @@ type Set struct {
 	Types        map[string]Type
 	Descriptions map[string]string
 	Extensions   map[string]map[string]any
-	Deprecated   map[string]any
 	Groups       map[string]Group
 	Metadata     map[string]any
 }

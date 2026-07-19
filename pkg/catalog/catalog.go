@@ -23,19 +23,6 @@ import (
 // ManifestSchemaVersion is the current contribution-manifest schema.
 const ManifestSchemaVersion = "pk.design.contribution.v1"
 
-// ConflictPolicy controls duplicate contribution keys.
-type ConflictPolicy int
-
-// Conflict policies for duplicate contribution keys.
-const (
-	// ConflictReject fails the build when two contributions share a key.
-	ConflictReject ConflictPolicy = iota
-	// ConflictFirstWins keeps the first contribution and ignores later duplicates.
-	ConflictFirstWins
-	// ConflictLastWins lets later contributions overwrite earlier duplicates.
-	ConflictLastWins
-)
-
 // Contribution is one design extension bundle from a module, app, or product.
 type Contribution struct {
 	Source     string
@@ -52,7 +39,6 @@ type Manifest struct {
 	Version       string
 	Compatibility Compatibility
 	Capabilities  []string
-	Deprecations  []Deprecation
 	Metadata      map[string]any
 }
 
@@ -60,14 +46,6 @@ type Manifest struct {
 type Compatibility struct {
 	MinCoreVersion string
 	MaxCoreVersion string
-}
-
-// Deprecation declares a token or component contract that downstream tooling
-// should phase out.
-type Deprecation struct {
-	Path        string
-	Replacement string
-	Message     string
 }
 
 // Entry records the source that contributed a normalized value.
@@ -88,21 +66,11 @@ type Catalog struct {
 // Builder gathers contributions and validates them into a Catalog.
 type Builder struct {
 	contributions []Contribution
-	conflict      ConflictPolicy
 }
 
 // New creates a design catalog builder.
 func New() *Builder {
-	return &Builder{conflict: ConflictReject}
-}
-
-// WithConflictPolicy sets duplicate-key behavior.
-func (b *Builder) WithConflictPolicy(policy ConflictPolicy) *Builder {
-	if b == nil {
-		return b
-	}
-	b.conflict = policy
-	return b
+	return &Builder{}
 }
 
 // Add appends a contribution.
@@ -125,9 +93,6 @@ func (b *Builder) Build() (*Catalog, error) {
 	if b == nil {
 		return catalog, nil
 	}
-	if err := validateConflictPolicy(b.conflict); err != nil {
-		return nil, err
-	}
 	for _, contribution := range b.contributions {
 		manifest, err := normalizeManifest(contribution.Manifest, contribution.Source)
 		if err != nil {
@@ -138,7 +103,7 @@ func (b *Builder) Build() (*Catalog, error) {
 			return nil, fmt.Errorf("design contribution source is required")
 		}
 		if source != "" {
-			if err := insert(catalog.manifests, source, source, manifest, b.conflict); err != nil {
+			if err := insert(catalog.manifests, source, source, manifest); err != nil {
 				return nil, err
 			}
 		}
@@ -147,7 +112,7 @@ func (b *Builder) Build() (*Catalog, error) {
 			if err != nil {
 				return nil, fmt.Errorf("design contribution %q token set: %w", source, err)
 			}
-			if err := insert(catalog.tokenSets, normalized.Name, source, normalized, b.conflict); err != nil {
+			if err := insert(catalog.tokenSets, normalized.Name, source, normalized); err != nil {
 				return nil, err
 			}
 		}
@@ -156,7 +121,7 @@ func (b *Builder) Build() (*Catalog, error) {
 			if err != nil {
 				return nil, fmt.Errorf("design contribution %q theme: %w", source, err)
 			}
-			if err := insert(catalog.themes, normalized.ID, source, normalized, b.conflict); err != nil {
+			if err := insert(catalog.themes, normalized.ID, source, normalized); err != nil {
 				return nil, err
 			}
 		}
@@ -165,7 +130,7 @@ func (b *Builder) Build() (*Catalog, error) {
 			if err != nil {
 				return nil, fmt.Errorf("design contribution %q component: %w", source, err)
 			}
-			if err := insert(catalog.components, normalized.ID, source, normalized, b.conflict); err != nil {
+			if err := insert(catalog.components, normalized.ID, source, normalized); err != nil {
 				return nil, err
 			}
 		}
@@ -260,18 +225,10 @@ func (c *Catalog) ManifestEntries() []Entry[Manifest] {
 	return out
 }
 
-func insert[T any](entries map[string]Entry[T], key, source string, value T, policy ConflictPolicy) error {
+func insert[T any](entries map[string]Entry[T], key, source string, value T) error {
 	key = strings.TrimSpace(key)
 	if existing, exists := entries[key]; exists {
-		switch policy {
-		case ConflictReject:
-			return fmt.Errorf("design catalog: duplicate key %q from %q already contributed by %q", key, source, existing.Source)
-		case ConflictFirstWins:
-			return nil
-		case ConflictLastWins:
-		default:
-			return fmt.Errorf("design catalog: unknown conflict policy %d", policy)
-		}
+		return fmt.Errorf("design catalog: duplicate key %q from %q already contributed by %q", key, source, existing.Source)
 	}
 	entries[key] = Entry[T]{Key: key, Source: source, Value: value}
 	return nil
@@ -327,7 +284,6 @@ func copyTokenSet(value tokens.Set) tokens.Set {
 		Types:        maps.Clone(value.Types),
 		Descriptions: maps.Clone(value.Descriptions),
 		Extensions:   copyNestedAnyMap(value.Extensions),
-		Deprecated:   copyAnyMap(value.Deprecated),
 		Groups:       copyGroups(value.Groups),
 		Metadata:     copyAnyMap(value.Metadata),
 	}
@@ -350,16 +306,8 @@ func copyManifest(value Manifest) Manifest {
 		Version:       value.Version,
 		Compatibility: value.Compatibility,
 		Capabilities:  slices.Clone(value.Capabilities),
-		Deprecations:  copyDeprecations(value.Deprecations),
 		Metadata:      copyAnyMap(value.Metadata),
 	}
-}
-
-func copyDeprecations(values []Deprecation) []Deprecation {
-	if len(values) == 0 {
-		return nil
-	}
-	return slices.Clone(values)
 }
 
 func copyTokenSets(values []tokens.Set) []tokens.Set {
@@ -518,15 +466,6 @@ func copyAny(value any) any {
 	}
 }
 
-func validateConflictPolicy(policy ConflictPolicy) error {
-	switch policy {
-	case ConflictReject, ConflictFirstWins, ConflictLastWins:
-		return nil
-	default:
-		return fmt.Errorf("design catalog: unknown conflict policy %d", policy)
-	}
-}
-
 func normalizeManifest(manifest Manifest, contributionSource string) (Manifest, error) {
 	source := strings.TrimSpace(contributionSource)
 	manifestSource := strings.TrimSpace(manifest.Source)
@@ -570,7 +509,6 @@ func normalizeManifest(manifest Manifest, contributionSource string) (Manifest, 
 			MaxCoreVersion: maxCoreVersion,
 		},
 		Capabilities: normalizeList(manifest.Capabilities),
-		Deprecations: normalizeDeprecations(manifest.Deprecations),
 		Metadata:     normalizeAnyMap(manifest.Metadata),
 	}
 	return out, nil
@@ -591,21 +529,6 @@ func normalizeList(values []string) []string {
 		out = append(out, value)
 	}
 	slices.Sort(out)
-	return out
-}
-
-func normalizeDeprecations(values []Deprecation) []Deprecation {
-	out := make([]Deprecation, 0, len(values))
-	for _, value := range values {
-		deprecation := Deprecation{
-			Path:        strings.TrimSpace(value.Path),
-			Replacement: strings.TrimSpace(value.Replacement),
-			Message:     strings.TrimSpace(value.Message),
-		}
-		if deprecation.Path != "" {
-			out = append(out, deprecation)
-		}
-	}
 	return out
 }
 

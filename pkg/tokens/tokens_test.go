@@ -3,8 +3,9 @@ package tokens
 // tokens_test.go validates token normalization, overlays, CSS export, DTCG
 // export, and defensive-copy behavior for the OSS design-token contract.
 //
-// ADR: ADR-0029 (file purpose declaration).
-// Convention: C-10 (shared builders return errors), C-14 (every Go file declares its purpose).
+// Validates: REQ-011.
+// Per: ADR-0029 (file purpose declaration); C-10 (shared builders return errors).
+// Discipline: C-14.
 
 import (
 	"encoding/json"
@@ -430,6 +431,36 @@ func TestValidateReturnsStableIssueCodes(t *testing.T) {
 	}
 }
 
+func TestValidateReturnsIssuesInDeterministicPathOrder(t *testing.T) {
+	t.Parallel()
+
+	report := Validate(Set{
+		Name: "pk",
+		Values: map[string]Value{
+			"z invalid": "#fff",
+			"c invalid": "#fff",
+			"h invalid": "#fff",
+			"a invalid": "#fff",
+			"f invalid": "#fff",
+			"b invalid": "#fff",
+			"e invalid": "#fff",
+			"d invalid": "#fff",
+		},
+	})
+
+	got := make([]string, 0, len(report.Issues))
+	for _, issue := range report.Issues {
+		if issue.Code != IssueInvalidPath {
+			t.Fatalf("Validate() issue = %#v, want only %s", issue, IssueInvalidPath)
+		}
+		got = append(got, issue.Path)
+	}
+	want := []string{"a invalid", "b invalid", "c invalid", "d invalid", "e invalid", "f invalid", "h invalid", "z invalid"}
+	if !slices.Equal(got, want) {
+		t.Fatalf("Validate() issue paths = %v; want %v", got, want)
+	}
+}
+
 func TestCSSVarsRejectsUnrenderableCompositeValues(t *testing.T) {
 	t.Parallel()
 
@@ -561,6 +592,13 @@ func TestParseDTCGRejectsInvalidDocuments(t *testing.T) {
 	if _, err := ParseDTCGJSON("pk", []byte(`{"color":{"brand":{"$value":"#2563eb"}}} {}`)); err == nil {
 		t.Fatal("ParseDTCGJSON() should reject trailing JSON documents")
 	}
+	if _, err := ParseDTCG("pk", map[string]any{
+		"color": map[string]any{
+			"old": map[string]any{"$value": "#fff", "$deprecated": "Use color.new"},
+		},
+	}); err == nil {
+		t.Fatal("ParseDTCG() should reject $deprecated metadata")
+	}
 }
 
 func TestResolveRejectsInvalidGroupExtends(t *testing.T) {
@@ -604,7 +642,7 @@ func TestNormalizeAllowsGroupOnlyOverlay(t *testing.T) {
 	}
 }
 
-func TestMergePreservesDeprecatedAndMetadata(t *testing.T) {
+func TestMergePreservesMetadata(t *testing.T) {
 	t.Parallel()
 
 	merged, err := Merge(
@@ -612,9 +650,6 @@ func TestMergePreservesDeprecatedAndMetadata(t *testing.T) {
 			Name: "pk",
 			Values: map[string]Value{
 				"color.old": "#111111",
-			},
-			Deprecated: map[string]any{
-				"color.old": "Use color.new",
 			},
 			Metadata: map[string]any{"owner": "core"},
 		},
@@ -628,9 +663,6 @@ func TestMergePreservesDeprecatedAndMetadata(t *testing.T) {
 	)
 	if err != nil {
 		t.Fatalf("Merge() error = %v", err)
-	}
-	if merged.Deprecated["color.old"] != "Use color.new" {
-		t.Fatalf("Merge() deprecated = %#v", merged.Deprecated)
 	}
 	if merged.Metadata["owner"] != "core" || merged.Metadata["stage"] != "module" {
 		t.Fatalf("Merge() metadata = %#v", merged.Metadata)

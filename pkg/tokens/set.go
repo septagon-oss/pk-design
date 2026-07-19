@@ -54,7 +54,6 @@ func (s Set) Lookup(path string) (Token, bool, error) {
 		Value:       deepCopyValue(value),
 		Description: normalized.Descriptions[path],
 		Extensions:  normalizeAnyMap(normalized.Extensions[path]),
-		Deprecated:  deepCopyValue(normalized.Deprecated[path]),
 	}, true, nil
 }
 
@@ -87,7 +86,6 @@ func Merge(base Set, overlays ...Set) (Set, error) {
 		merged.Types = mergeTypeMaps(merged.Types, next.Types)
 		merged.Descriptions = mergeStringMaps(merged.Descriptions, next.Descriptions)
 		merged.Extensions = mergeNestedAnyMaps(merged.Extensions, next.Extensions)
-		merged.Deprecated = mergeAnyMaps(merged.Deprecated, next.Deprecated)
 	}
 	return merged.Normalize()
 }

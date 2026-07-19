@@ -66,7 +66,7 @@ caller intentionally needs explicit ordering.
 - Layer/mode resolution applies global layers plus layers matching the requested mode.
 - Canonical theme stacks preserve contribution order inside the same layer kind.
 - Component enum defaults must be declared enum values.
-- Contribution manifests declare source, schema, semantic version, capabilities, compatibility, and deprecations.
+- Contribution manifests declare source, schema, semantic version, capabilities, and compatibility.
 - Manifest compatibility ranges must be valid semantic versions and cannot be inverted.
 - Catalog builders snapshot contributions when they are added.
 - Catalog reads return defensive copies of maps and slices.

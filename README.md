@@ -60,7 +60,7 @@ inventory that CI validates for release readiness.
 
 Modules contribute token sets, themes, and component descriptors through
 `catalog.Contribution`. Each contribution may include a manifest with schema,
-semantic version, compatibility range, capabilities, and deprecation metadata.
+semantic version, compatibility range, and capabilities.
 Apps compose those contributions into a `Catalog`, then their renderer of choice
 can transform the catalog into CSS, native tokens, component docs, previews, or
 runtime UI metadata.

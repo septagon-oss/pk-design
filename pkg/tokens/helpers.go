@@ -3,8 +3,9 @@ package tokens
 // helpers.go owns deterministic copy, merge, and sorting helpers shared across
 // the token package internals.
 //
-// ADR: ADR-0029 (file purpose declaration).
-// Convention: C-10 (shared builders return errors), C-14 (every Go file declares its purpose).
+// Implements: REQ-011.
+// Per: ADR-0029 (file purpose declaration); C-10 (shared builders return errors).
+// Discipline: C-14.
 
 import (
 	"encoding/json"
@@ -18,8 +19,9 @@ func normalizeStringMap(values map[string]string) map[string]string {
 		return nil
 	}
 	out := make(map[string]string, len(values))
-	for key, value := range values {
-		key = strings.TrimSpace(key)
+	for _, rawKey := range sortedMapKeys(values) {
+		key := strings.TrimSpace(rawKey)
+		value := values[rawKey]
 		value = strings.TrimSpace(value)
 		if key != "" && value != "" {
 			out[key] = value
@@ -36,8 +38,9 @@ func normalizeAnyMap(values map[string]any) map[string]any {
 		return nil
 	}
 	out := make(map[string]any, len(values))
-	for key, value := range values {
-		key = strings.TrimSpace(key)
+	for _, rawKey := range sortedMapKeys(values) {
+		key := strings.TrimSpace(rawKey)
+		value := values[rawKey]
 		if key != "" && value != nil {
 			out[key] = deepCopyValue(value)
 		}
@@ -173,16 +176,20 @@ func deepCopyValue(value Value) Value {
 	}
 }
 
-func sortedValueKeys(values map[string]Value) []string {
+func sortedMapKeys[T any](values map[string]T) []string {
 	return slices.Sorted(maps.Keys(values))
+}
+
+func sortedValueKeys(values map[string]Value) []string {
+	return sortedMapKeys(values)
 }
 
 func sortedGroupKeys(values map[string]Group) []string {
-	return slices.Sorted(maps.Keys(values))
+	return sortedMapKeys(values)
 }
 
 func sortedObjectKeys(values map[string]any) []string {
-	return slices.Sorted(maps.Keys(values))
+	return sortedMapKeys(values)
 }
 
 func contains(values []string, want string) bool {

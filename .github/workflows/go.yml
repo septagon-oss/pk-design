@@ -23,8 +23,5 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Install staticcheck
-        run: go install honnef.co/go/tools/cmd/staticcheck@latest
-
       - name: Verify
-        run: STATICCHECK="$(go env GOPATH)/bin/staticcheck" make verify
+        run: make verify

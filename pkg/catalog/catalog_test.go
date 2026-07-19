@@ -184,32 +184,14 @@ func TestBuilderAddSnapshotsContribution(t *testing.T) {
 	}
 }
 
-func TestConflictPolicies(t *testing.T) {
+func TestCatalogRejectsDuplicateKeys(t *testing.T) {
 	t.Parallel()
 
 	first := Contribution{Source: "first", TokenSets: []tokens.Set{testSet("pk", "#111111")}}
 	second := Contribution{Source: "second", TokenSets: []tokens.Set{testSet("pk", "#222222")}}
 
 	if _, err := New().Add(first).Add(second).Build(); err == nil {
-		t.Fatal("Build() should reject duplicate keys by default")
-	}
-
-	catalog, err := New().WithConflictPolicy(ConflictFirstWins).Add(first).Add(second).Build()
-	if err != nil {
-		t.Fatalf("Build() first-wins error = %v", err)
-	}
-	set, _ := catalog.TokenSet("pk")
-	if set.Values["color.text.primary"] != "#111111" {
-		t.Fatalf("first-wins set = %#v", set.Values)
-	}
-
-	catalog, err = New().WithConflictPolicy(ConflictLastWins).Add(first).Add(second).Build()
-	if err != nil {
-		t.Fatalf("Build() last-wins error = %v", err)
-	}
-	set, _ = catalog.TokenSet("pk")
-	if set.Values["color.text.primary"] != "#222222" {
-		t.Fatalf("last-wins set = %#v", set.Values)
+		t.Fatal("Build() should reject duplicate keys")
 	}
 }
 
@@ -226,11 +208,7 @@ func TestManifestNormalization(t *testing.T) {
 					MaxCoreVersion: " v2.0.0 ",
 				},
 				Capabilities: []string{"tokens", "components", "tokens"},
-				Deprecations: []Deprecation{
-					{Path: "color.old", Replacement: "color.new", Message: "Use the semantic token"},
-					{Path: " "},
-				},
-				Metadata: map[string]any{" owner ": "design"},
+				Metadata:     map[string]any{" owner ": "design"},
 			},
 			TokenSets: []tokens.Set{testSet("pk", "#111111")},
 		}).
@@ -251,10 +229,6 @@ func TestManifestNormalization(t *testing.T) {
 	if !slices.Equal(manifest.Capabilities, []string{"components", "tokens"}) {
 		t.Fatalf("Manifest() capabilities = %#v", manifest.Capabilities)
 	}
-	if len(manifest.Deprecations) != 1 || manifest.Deprecations[0].Path != "color.old" {
-		t.Fatalf("Manifest() deprecations = %#v", manifest.Deprecations)
-	}
-
 	manifest.Metadata["owner"] = "mutated"
 	again, _ := catalog.Manifest("module.booking")
 	if again.Metadata["owner"] != "design" {
@@ -353,9 +327,6 @@ func TestBuildRejectsInvalidInput(t *testing.T) {
 
 	if _, err := New().Add(Contribution{Source: " "}).Build(); err == nil {
 		t.Fatal("Build() should reject empty contribution source")
-	}
-	if _, err := New().WithConflictPolicy(ConflictPolicy(99)).Build(); err == nil {
-		t.Fatal("Build() should reject unknown conflict policy")
 	}
 	if _, err := New().Add(Contribution{Source: "base", TokenSets: []tokens.Set{{Name: "bad name"}}}).Build(); err == nil {
 		t.Fatal("Build() should reject invalid token set")
