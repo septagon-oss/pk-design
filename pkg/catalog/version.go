@@ -89,7 +89,7 @@ func validSemverIdentifiers(value string, allowNumericLeadingZero bool) bool {
 	if value == "" {
 		return false
 	}
-	for _, part := range strings.Split(value, ".") {
+	for part := range strings.SplitSeq(value, ".") {
 		if part == "" {
 			return false
 		}

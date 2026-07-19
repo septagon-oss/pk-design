@@ -359,7 +359,7 @@ func validateTokenRef(value string) error {
 	if strings.ContainsAny(value, " \t\n\r") {
 		return fmt.Errorf("token ref %q must not contain whitespace", value)
 	}
-	for _, segment := range strings.Split(value, ".") {
+	for segment := range strings.SplitSeq(value, ".") {
 		if !validIdentifier(segment) {
 			return fmt.Errorf("token ref %q contains invalid segment %q", value, segment)
 		}

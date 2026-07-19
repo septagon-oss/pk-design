@@ -9,6 +9,7 @@ package themes
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 
@@ -291,8 +292,6 @@ func mergeStringMaps(base, overlay map[string]string) map[string]string {
 	if out == nil {
 		out = map[string]string{}
 	}
-	for key, value := range normalizeStringMap(overlay) {
-		out[key] = value
-	}
+	maps.Copy(out, normalizeStringMap(overlay))
 	return out
 }

@@ -59,9 +59,7 @@ func mergeStringMaps(base, overlay map[string]string) map[string]string {
 	if out == nil {
 		out = map[string]string{}
 	}
-	for key, value := range normalizeStringMap(overlay) {
-		out[key] = value
-	}
+	maps.Copy(out, normalizeStringMap(overlay))
 	return out
 }
 
@@ -73,9 +71,7 @@ func mergeAnyMaps(base, overlay map[string]any) map[string]any {
 	if out == nil {
 		out = map[string]any{}
 	}
-	for key, value := range normalizeAnyMap(overlay) {
-		out[key] = value
-	}
+	maps.Copy(out, normalizeAnyMap(overlay))
 	return out
 }
 
