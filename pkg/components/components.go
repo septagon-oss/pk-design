@@ -1,3 +1,7 @@
+// Implements: REQ-011.
+// Per: ADR-0029.
+// Discipline: C-14.
+
 // Package components defines provider-neutral design component descriptors.
 package components
 

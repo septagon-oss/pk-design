@@ -1,3 +1,7 @@
+// Implements: REQ-011.
+// Per: ADR-0029.
+// Discipline: C-14.
+
 package catalog
 
 // version.go owns semantic-version validation for contribution manifests. The

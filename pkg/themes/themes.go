@@ -1,3 +1,7 @@
+// Implements: REQ-011.
+// Per: ADR-0029.
+// Discipline: C-14.
+
 // Package themes defines renderer-neutral PlatformKit theme overlays.
 package themes
 
