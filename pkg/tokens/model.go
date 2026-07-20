@@ -1,6 +1,9 @@
 // Package tokens provides provider-neutral, DTCG-native design-token documents.
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // model.go owns the public DTCG token data model and stable validation issue
 // vocabulary for pk-design.
 //

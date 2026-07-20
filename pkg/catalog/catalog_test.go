@@ -1,5 +1,8 @@
 package catalog
 
+// Validates: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // catalog_test.go validates contribution aggregation, duplicate-key policies,
 // deterministic entries, and immutable catalog reads.
 //

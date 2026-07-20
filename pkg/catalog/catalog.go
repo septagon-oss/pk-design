@@ -1,6 +1,9 @@
 // Package catalog builds deterministic design contribution catalogs.
 package catalog
 
+// Implements: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // catalog.go owns the pk-design extension point: modules, apps, and downstream
 // distributions contribute token sets, themes, and component descriptors through
 // one provider-neutral catalog without importing renderers or private code.

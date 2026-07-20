@@ -1,5 +1,8 @@
 package architecture_test
 
+// Validates: REQ-002.
+// Per: ADR-0009.
+// Discipline: C-14.
 // block_manifest_test.go makes the design-block inventory executable: tokens,
 // themes, components, and catalogs must declare public contracts, extension
 // points, composition laws, and evidence that exists in the repo.

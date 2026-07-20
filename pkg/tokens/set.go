@@ -1,5 +1,8 @@
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // set.go owns the public Set operations: normalization, lookup, merge, and
 // reference resolution entry points.
 //

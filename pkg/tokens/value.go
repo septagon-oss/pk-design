@@ -1,5 +1,8 @@
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // value.go owns small public helpers for safe token-value handling. Extensions
 // can use these helpers instead of depending on package internals or ad-hoc
 // type assertions.

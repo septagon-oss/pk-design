@@ -1,5 +1,8 @@
 package themes
 
+// Validates: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // themes_test.go validates theme normalization, layering, CSS export, and
 // defensive-copy behavior for the OSS theme contract.
 //

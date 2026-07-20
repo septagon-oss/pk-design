@@ -1,5 +1,8 @@
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // dtcg.go owns lossless DTCG document import/export. The flat Set model stays
 // small while this file handles nested document shape at the boundary.
 //

@@ -1,5 +1,8 @@
 package themes
 
+// Implements: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // stack.go owns canonical token-layer stack composition. ResolveLayers remains
 // available for explicit caller order; Stack gives modules and apps a stable
 // default order for extension-heavy PlatformKit surfaces.

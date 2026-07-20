@@ -1,5 +1,8 @@
 package tokens_test
 
+// Validates: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // example_test.go documents the public token API with executable examples.
 //
 // ADR: ADR-0029 (file purpose declaration).

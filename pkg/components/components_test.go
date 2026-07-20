@@ -1,5 +1,8 @@
 package components
 
+// Validates: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // components_test.go validates component descriptor normalization, validation,
 // deterministic ordering, and defensive-copy behavior.
 //

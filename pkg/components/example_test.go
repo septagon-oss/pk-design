@@ -1,5 +1,8 @@
 package components_test
 
+// Validates: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // example_test.go documents the public component descriptor API with
 // executable examples.
 //

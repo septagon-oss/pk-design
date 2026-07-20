@@ -1,5 +1,8 @@
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // report.go owns validation report behavior for token consumers and tooling.
 //
 // ADR: ADR-0029 (file purpose declaration).

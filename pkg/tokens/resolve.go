@@ -1,5 +1,8 @@
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // resolve.go owns group inheritance and token-reference resolution. Resolution
 // returns a new normalized set and never mutates the caller's input.
 //

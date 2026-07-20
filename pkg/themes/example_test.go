@@ -1,5 +1,8 @@
 package themes_test
 
+// Validates: REQ-011.
+// Per: ADR-0031.
+// Discipline: C-14.
 // example_test.go documents the public theme API with executable examples.
 //
 // ADR: ADR-0029 (file purpose declaration).

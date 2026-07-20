@@ -1,5 +1,8 @@
 package tokens
 
+// Implements: REQ-011.
+// Per: ADR-0004.
+// Discipline: C-14.
 // css.go owns renderer-neutral CSS custom-property export for resolved token
 // sets. It intentionally emits plain CSS data only; framework adapters belong
 // outside pk-design core.
