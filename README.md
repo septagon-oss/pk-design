@@ -1,5 +1,9 @@
 # pk-design
 
+> Part of [PlatformKit](https://github.com/septagon-oss/platformkit) — the open-source Go backend for multi-tenant SaaS.
+
+**Depends on.** Nothing else in PlatformKit. It is a standalone contracts repo.
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/septagon-oss/pk-design.svg)](https://pkg.go.dev/github.com/septagon-oss/pk-design)
 [![CI](https://github.com/septagon-oss/pk-design/actions/workflows/go.yml/badge.svg)](https://github.com/septagon-oss/pk-design/actions/workflows/go.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -49,6 +53,7 @@ func main() {
 - `pkg/themes`: token-first theme overlays, explicit layer resolution, and canonical `Stack` composition
 - `pkg/components`: renderer-neutral component descriptors (props, slots, variants, anatomy, token dependencies)
 - `pkg/catalog`: deterministic contribution catalog and manifests for modules and apps
+- `pkg/architecture`: executable block-manifest tests that require tokens, themes, components, and catalogs to declare public contracts, extension points, composition laws, and in-repo evidence
 
 Renderer adapters, Tailwind config generation, Figma import/export, Storybook
 metadata, and client-specific surfaces belong outside this core. See
