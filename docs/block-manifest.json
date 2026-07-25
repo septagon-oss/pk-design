@@ -24,12 +24,13 @@
       "version": "0.0.0",
       "package": "github.com/septagon-oss/pk-design/pkg/themes",
       "status": "composable",
-      "contracts": ["Theme", "TokenLayer", "Stack", "ResolveLayers", "ResolveMode"],
+      "contracts": ["Theme", "TokenLayer", "Stack", "ResolveLayers", "ResolveMode", "Default"],
       "compositionLaws": ["identity", "closure", "determinism", "ordered overlay"],
       "extensionPoints": ["module layer", "app layer", "client layer", "tenant layer", "accessibility layer"],
       "evidence": [
         "pkg/themes/themes_test.go",
-        "pkg/themes/example_test.go"
+        "pkg/themes/example_test.go",
+        "pkg/themes/default_test.go"
       ]
     },
     {
