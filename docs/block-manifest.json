@@ -62,6 +62,21 @@
         "pkg/catalog/catalog_test.go",
         "pkg/catalog/example_test.go"
       ]
+    },
+    {
+      "id": "pk-design.handoff",
+      "kind": "contract",
+      "owner": "pk-design",
+      "version": "0.0.0",
+      "package": "github.com/septagon-oss/pk-design/pkg/handoff",
+      "status": "composable",
+      "contracts": ["Profile", "Snapshot", "Origin", "ChangeSet", "Diff", "Apply", "ConflictError"],
+      "compositionLaws": ["identity", "closure", "determinism", "atomicity", "optimistic concurrency", "diagnostics"],
+      "extensionPoints": ["provider adapters", "source writers", "profile layers", "token modes", "origin metadata"],
+      "evidence": [
+        "pkg/handoff/handoff_test.go",
+        "pkg/handoff/example_test.go"
+      ]
     }
   ]
 }

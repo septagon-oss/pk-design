@@ -1,0 +1,154 @@
+{
+  "color": {
+    "surface": {
+      "canvas": {
+        "$value": "#f2efe7",
+        "$type": "color"
+      },
+      "primary": {
+        "$value": "#fffdf7",
+        "$type": "color"
+      },
+      "muted": {
+        "$value": "#e9e4d8",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "#15221f",
+        "$type": "color"
+      },
+      "muted": {
+        "$value": "#5f6b65",
+        "$type": "color"
+      }
+    },
+    "border": {
+      "default": {
+        "$value": "#cbc5b8",
+        "$type": "color"
+      },
+      "strong": {
+        "$value": "#8f988f",
+        "$type": "color"
+      }
+    },
+    "accent": {
+      "default": {
+        "$value": "#0f5d4e",
+        "$type": "color"
+      },
+      "hover": {
+        "$value": "#0a493e",
+        "$type": "color"
+      },
+      "on": {
+        "$value": "#f9fff9",
+        "$type": "color"
+      }
+    },
+    "signal": {
+      "$value": "#d8f35d",
+      "$type": "color"
+    },
+    "focus": {
+      "$value": "#326de6",
+      "$type": "color"
+    },
+    "status": {
+      "ok": {
+        "$value": "#12715d",
+        "$type": "color"
+      },
+      "okbg": {
+        "$value": "#dcf3e8",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "#9a5318",
+        "$type": "color"
+      },
+      "warningbg": {
+        "$value": "#fff0d2",
+        "$type": "color"
+      },
+      "danger": {
+        "$value": "#9e3833",
+        "$type": "color"
+      },
+      "dangerbg": {
+        "$value": "#fbe5e2",
+        "$type": "color"
+      }
+    },
+    "sidebar": {
+      "bg": {
+        "$value": "#12201d",
+        "$type": "color"
+      },
+      "text": {
+        "$value": "#eff4e9",
+        "$type": "color"
+      },
+      "muted": {
+        "$value": "#aebbb2",
+        "$type": "color"
+      }
+    }
+  },
+  "font": {
+    "display": {
+      "$value": "\"Iowan Old Style\", \"Palatino Linotype\", Palatino, Georgia, serif",
+      "$type": "fontFamily"
+    },
+    "body": {
+      "$value": "\"IBM Plex Sans\", Aptos, \"Helvetica Neue\", sans-serif",
+      "$type": "fontFamily"
+    },
+    "mono": {
+      "$value": "\"IBM Plex Mono\", \"SFMono-Regular\", Consolas, monospace",
+      "$type": "fontFamily"
+    }
+  },
+  "space": {
+    "1": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "2": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "3": {
+      "$value": "12px",
+      "$type": "dimension"
+    },
+    "4": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "5": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "6": {
+      "$value": "32px",
+      "$type": "dimension"
+    }
+  },
+  "radius": {
+    "sm": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "md": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "pill": {
+      "$value": "999px",
+      "$type": "dimension"
+    }
+  }
+}

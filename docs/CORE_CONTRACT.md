@@ -6,12 +6,15 @@ private repository.
 
 ## Scope
 
-The core includes four primitives:
+The core includes five primitives:
 
 - `pkg/tokens`: DTCG-native token sets with stable import/export, safe reference/value helpers, alias resolution, `$root`, `$extends`, validation reports, and CSS export.
 - `pkg/themes`: token-first theme overlays, explicit layer resolution, and canonical stack composition for base, primitive, semantic, module, app, client, tenant, platform, and accessibility layers.
 - `pkg/components`: provider-neutral component descriptors for props, slots, variants, anatomy, and token requirements.
 - `pkg/catalog`: deterministic aggregation of design contributions and manifests from modules and apps.
+- `pkg/handoff`: provider-neutral token snapshots and atomic change sets with
+  stable content digests, immutable source ownership, and optimistic
+  concurrency.
 
 The core deliberately excludes:
 
@@ -70,6 +73,10 @@ caller intentionally needs explicit ordering.
 - Manifest compatibility ranges must be valid semantic versions and cannot be inverted.
 - Catalog builders snapshot contributions when they are added.
 - Catalog reads return defensive copies of maps and slices.
+- External-editor changes must match the exact snapshot digest and expected
+  previous token state.
+- Read-only token origins and cross-origin mutations fail closed.
+- Snapshot and change-set ordering is deterministic and provider-neutral.
 - Core packages do not import frontend, Figma, Storybook, Tailwind, or private code.
 
 These invariants make the package safe for long-lived module ecosystems: a

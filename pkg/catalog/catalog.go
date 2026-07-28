@@ -376,8 +376,29 @@ func copyDescriptor(value components.Descriptor) components.Descriptor {
 	for i := range out.Props {
 		out.Props[i].EnumValues = slices.Clone(out.Props[i].EnumValues)
 	}
+	for i := range out.Slots {
+		out.Slots[i] = copySlot(out.Slots[i])
+	}
 	for i := range out.Variants {
 		out.Variants[i].Values = slices.Clone(out.Variants[i].Values)
+	}
+	return out
+}
+
+func copySlot(value components.Slot) components.Slot {
+	out := value
+	out.AllowedTypes = slices.Clone(value.AllowedTypes)
+	out.Attrs = slices.Clone(value.Attrs)
+	for i := range out.Attrs {
+		out.Attrs[i].EnumValues = slices.Clone(out.Attrs[i].EnumValues)
+	}
+	if value.Scope != nil {
+		out.Scope = &components.SlotScope{
+			Fields: slices.Clone(value.Scope.Fields),
+		}
+		for i := range out.Scope.Fields {
+			out.Scope.Fields[i].EnumValues = slices.Clone(out.Scope.Fields[i].EnumValues)
+		}
 	}
 	return out
 }

@@ -32,6 +32,8 @@ const (
 	CategoryOrganism Category = "organism"
 	// CategoryTemplate is a page-level layout scaffold.
 	CategoryTemplate Category = "template"
+	// CategoryPage is a complete authored solution composed from lower tiers.
+	CategoryPage Category = "page"
 	// CategorySurface is a container or backdrop component.
 	CategorySurface Category = "surface"
 	// CategoryPattern is a reusable interaction or composition pattern.
@@ -74,21 +76,56 @@ const (
 	PropToken PropType = "token"
 )
 
+// PropRole identifies how a property participates in native design tools.
+// Roles are orthogonal to value types: an enum may be a variant axis, a tone,
+// or ordinary content.
+type PropRole string
+
+const (
+	PropRoleDefault  PropRole = ""
+	PropRoleVariant  PropRole = "variant"
+	PropRoleTone     PropRole = "tone"
+	PropRoleSize     PropRole = "size"
+	PropRoleState    PropRole = "state"
+	PropRoleContent  PropRole = "content"
+	PropRoleModifier PropRole = "modifier"
+	PropRoleSlot     PropRole = "slot"
+)
+
 // Prop describes one component property.
 type Prop struct {
 	Name        string
 	Type        PropType
+	Role        PropRole
 	Required    bool
 	Description string
 	EnumValues  []string
 	Default     string
 }
 
+// SlotCardinality declares whether a named native slot holds one child or a
+// repeatable collection.
+type SlotCardinality string
+
+const (
+	SlotOne  SlotCardinality = "one"
+	SlotMany SlotCardinality = "many"
+)
+
+// SlotScope declares values supplied to every repeated slot body.
+type SlotScope struct {
+	Fields []Prop
+}
+
 // Slot describes one named render slot.
 type Slot struct {
-	Name        string
-	Required    bool
-	Description string
+	Name         string
+	Required     bool
+	Description  string
+	AllowedTypes []string
+	Cardinality  SlotCardinality
+	Attrs        []Prop
+	Scope        *SlotScope
 }
 
 // Variant describes one named visual or behavioral variant.
@@ -189,6 +226,10 @@ func normalizeProps(props []Prop) ([]Prop, error) {
 		if !validPropType(prop.Type) {
 			return nil, fmt.Errorf("prop %q type %q is not supported", prop.Name, prop.Type)
 		}
+		prop.Role = PropRole(strings.TrimSpace(string(prop.Role)))
+		if !validPropRole(prop.Role) {
+			return nil, fmt.Errorf("prop %q role %q is not supported", prop.Name, prop.Role)
+		}
 		prop.Description = strings.TrimSpace(prop.Description)
 		prop.Default = strings.TrimSpace(prop.Default)
 		var err error
@@ -234,6 +275,27 @@ func normalizeSlots(slots []Slot) ([]Slot, error) {
 			return nil, fmt.Errorf("slot name %q is invalid", slot.Name)
 		}
 		slot.Description = strings.TrimSpace(slot.Description)
+		slot.Cardinality = SlotCardinality(strings.TrimSpace(string(slot.Cardinality)))
+		if slot.Cardinality == "" {
+			slot.Cardinality = SlotOne
+		}
+		if slot.Cardinality != SlotOne && slot.Cardinality != SlotMany {
+			return nil, fmt.Errorf("slot %q cardinality %q is not supported", slot.Name, slot.Cardinality)
+		}
+		var err error
+		if slot.AllowedTypes, err = normalizeLocalIdentifiers(slot.AllowedTypes); err != nil {
+			return nil, fmt.Errorf("slot %q allowed types: %w", slot.Name, err)
+		}
+		if slot.Attrs, err = normalizeProps(slot.Attrs); err != nil {
+			return nil, fmt.Errorf("slot %q attrs: %w", slot.Name, err)
+		}
+		if slot.Scope != nil {
+			scope := &SlotScope{}
+			if scope.Fields, err = normalizeProps(slot.Scope.Fields); err != nil {
+				return nil, fmt.Errorf("slot %q scope: %w", slot.Name, err)
+			}
+			slot.Scope = scope
+		}
 		if _, exists := seen[slot.Name]; exists {
 			return nil, fmt.Errorf("duplicate slot %q", slot.Name)
 		}
@@ -373,7 +435,7 @@ func validateTokenRef(value string) error {
 
 func validCategory(category Category) bool {
 	switch category {
-	case CategoryAtom, CategoryMolecule, CategoryOrganism, CategoryTemplate, CategorySurface, CategoryPattern:
+	case CategoryAtom, CategoryMolecule, CategoryOrganism, CategoryTemplate, CategoryPage, CategorySurface, CategoryPattern:
 		return true
 	default:
 		return false
@@ -396,6 +458,37 @@ func validPropType(propType PropType) bool {
 	default:
 		return false
 	}
+}
+
+func validPropRole(role PropRole) bool {
+	switch role {
+	case PropRoleDefault, PropRoleVariant, PropRoleTone, PropRoleSize,
+		PropRoleState, PropRoleContent, PropRoleModifier, PropRoleSlot:
+		return true
+	default:
+		return false
+	}
+}
+
+func normalizeLocalIdentifiers(values []string) ([]string, error) {
+	out := make([]string, 0, len(values))
+	seen := make(map[string]struct{}, len(values))
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value == "" {
+			continue
+		}
+		if !validLocalIdentifier(value) {
+			return nil, fmt.Errorf("value %q is invalid", value)
+		}
+		if _, exists := seen[value]; exists {
+			continue
+		}
+		seen[value] = struct{}{}
+		out = append(out, value)
+	}
+	slices.Sort(out)
+	return out, nil
 }
 
 func validIdentifier(value string) bool {

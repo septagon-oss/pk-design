@@ -53,6 +53,8 @@ func main() {
 - `pkg/themes`: token-first theme overlays, explicit layer resolution, and canonical `Stack` composition
 - `pkg/components`: renderer-neutral component descriptors (props, slots, variants, anatomy, token dependencies)
 - `pkg/catalog`: deterministic contribution catalog and manifests for modules and apps
+- `pkg/handoff`: provider-neutral token snapshots, ownership, stable digests,
+  minimal change sets, and fail-closed round-trip conflict detection
 - `pkg/architecture`: executable block-manifest tests that require tokens, themes, components, and catalogs to declare public contracts, extension points, composition laws, and in-repo evidence
 
 Renderer adapters, Tailwind config generation, Figma import/export, Storybook
@@ -74,6 +76,12 @@ The core packages validate inputs, sort deterministic lists, and return
 defensive copies so downstream extensions cannot mutate shared catalog state.
 Every public package ships executable examples; run them with
 `go test ./... -run Example -v`.
+
+External design tools remain adapters, not independent token sources. They
+import a `handoff.Snapshot`, retain its token origins and digest, and export the
+smallest `handoff.ChangeSet`. The owning source adapter applies that change set
+only when the parent digest, expected values, profile, and writable origins all
+still match.
 
 ## Verify
 

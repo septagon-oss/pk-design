@@ -15,7 +15,7 @@ Design tokens, themes, component descriptions, and contribution catalog contract
 
 - Renderers, view engines, or framework-specific adapters
 - CSS, HTML, or JavaScript bundles
-- Accessibility runtime helpers (live in platformkit-ui)
+- Accessibility runtime helpers (live in pk-ui)
 - Marketing or brand-specific assets (colours, logos)
 
 ## Dependencies
