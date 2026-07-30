@@ -168,10 +168,10 @@ func normalizeProfile(profile Profile) (Profile, error) {
 		}
 	case ProfilePro:
 		if profile.ClientID != "" {
-			return Profile{}, fmt.Errorf("Pro profile %q cannot declare clientId", profile.ID)
+			return Profile{}, fmt.Errorf("pro profile %q cannot declare clientId", profile.ID)
 		}
 		if profile.ParentID == "" || !validDigest(profile.ParentDigest) {
-			return Profile{}, fmt.Errorf("Pro profile %q requires parentId and parentDigest", profile.ID)
+			return Profile{}, fmt.Errorf("pro profile %q requires parentId and parentDigest", profile.ID)
 		}
 	case ProfileClient:
 		if !profileIDPattern.MatchString(profile.ClientID) {
