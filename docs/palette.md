@@ -17,6 +17,8 @@ Regenerate with UPDATE_GOLDEN=1; edit the theme, never this file.
 | `color.signal` | `#d8f35d` |
 | `color.status.danger` | `#9e3833` |
 | `color.status.dangerbg` | `#fbe5e2` |
+| `color.status.info` | `#2455c4` |
+| `color.status.infobg` | `#e5ecfa` |
 | `color.status.ok` | `#12715d` |
 | `color.status.okbg` | `#dcf3e8` |
 | `color.status.warning` | `#9a5318` |

@@ -45,6 +45,7 @@ func TestDefaultThemeIsReleaseGrade(t *testing.T) {
 		"color.status.ok", "color.status.okbg",
 		"color.status.warning", "color.status.warningbg",
 		"color.status.danger", "color.status.dangerbg",
+		"color.status.info", "color.status.infobg",
 		"color.sidebar.bg", "color.sidebar.text", "color.sidebar.muted",
 		"font.display", "font.body", "font.mono",
 		"space.1", "space.2", "space.3", "space.4", "space.5", "space.6",
@@ -67,6 +68,8 @@ func TestDefaultThemeIsReleaseGrade(t *testing.T) {
 		"color.text.primary":   "#15221f",
 		"color.accent.default": "#0f5d4e",
 		"color.signal":         "#d8f35d",
+		"color.status.info":    "#2455c4",
+		"color.status.infobg":  "#e5ecfa",
 		"color.sidebar.bg":     "#12201d",
 	} {
 		if got := theme.Tokens.Values[path]; got != want {

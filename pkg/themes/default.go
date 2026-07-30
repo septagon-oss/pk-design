@@ -20,7 +20,7 @@ const (
 	// DefaultThemeID is the stable identity of the canonical OSS theme.
 	DefaultThemeID = "pk-default"
 	// DefaultThemeVersion is bumped when the public token contract changes.
-	DefaultThemeVersion = "1.0.0"
+	DefaultThemeVersion = "1.1.0"
 	// DefaultSourceURI is the repository-relative writable token source.
 	DefaultSourceURI = "pkg/themes/default.tokens.json"
 )
@@ -50,6 +50,9 @@ func ParseDefaultSource(source []byte) (Theme, error) {
 	}).Normalize()
 	if err != nil {
 		return Theme{}, fmt.Errorf("pk-design: normalize default DTCG source: %w", err)
+	}
+	if err := validateDefaultAccessibility(normalized); err != nil {
+		return Theme{}, err
 	}
 	return normalized, nil
 }

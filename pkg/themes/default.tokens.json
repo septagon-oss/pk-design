@@ -80,6 +80,14 @@
       "dangerbg": {
         "$value": "#fbe5e2",
         "$type": "color"
+      },
+      "info": {
+        "$value": "#2455c4",
+        "$type": "color"
+      },
+      "infobg": {
+        "$value": "#e5ecfa",
+        "$type": "color"
       }
     },
     "sidebar": {
