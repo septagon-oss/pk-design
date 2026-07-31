@@ -106,8 +106,15 @@ func TestRenderPreservesLiteralDotPathAndDimensionCodec(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// The binding identity keeps the literal dot: Key and TokenPath are what
+	// resolve a variable back to its token, and they must survive verbatim.
 	variable := findVariable(t, bundle, "/spacing/0.5")
-	if variable.Name != "spacing/0.5" || variable.Type != "FLOAT" {
+	if variable.Binding.TokenPath != "/spacing/0.5" {
+		t.Fatalf("binding token path lost the literal dot: %#v", variable.Binding)
+	}
+	// The display name escapes it, because Figma refuses createVariable on a
+	// name containing a period — which aborted the entire token import.
+	if variable.Name != "spacing/0․5" || variable.Type != "FLOAT" {
 		t.Fatalf("spacing variable = %#v", variable)
 	}
 	if variable.Values["Default"] != float64(2) {
