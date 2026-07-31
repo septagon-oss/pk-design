@@ -169,6 +169,7 @@ func renderVariable(path string, grouped []handoff.Token) (Variable, []Diagnosti
 		Description: description,
 		Values:      map[string]any{},
 		Aliases:     map[string]string{},
+		Scopes:      variableScopes(path, tokenType),
 		Binding: Binding{
 			TokenPath: path,
 			ModeMap:   map[string]string{},
@@ -307,6 +308,13 @@ func displayName(pointer string) string {
 	}
 	for index, segment := range segments {
 		segment = strings.ReplaceAll(segment, "/", "∕")
+		// Figma refuses a variable name containing a period, so fractional
+		// spacing steps ("0.5") made createVariable fail and aborted the whole
+		// token import. Substituting the one-dot leader keeps the name looking
+		// exactly as authored while satisfying the API. Display names are
+		// cosmetic — bindings resolve through Key — so this cannot affect which
+		// token a variable is bound to.
+		segment = strings.ReplaceAll(segment, ".", "․")
 		segment = strings.Map(func(r rune) rune {
 			if unicode.IsControl(r) {
 				return -1
@@ -348,4 +356,85 @@ func tokenReference(value any) (string, bool) {
 		return "", false
 	}
 	return tokens.ParseReference(text)
+}
+
+// variableScopes limits where Figma offers a variable, derived from the DTCG
+// type and the canonical token taxonomy rather than from any one client's
+// names. Clients override token values and may add their own groups, but the
+// role words are fixed by the design system, so the same rules hold for every
+// profile.
+//
+// An unrecognised token returns nil, which Figma reads as every scope. That is
+// deliberate: a token we cannot classify should stay visible in the picker
+// rather than silently disappear from it.
+func variableScopes(path string, tokenType tokens.Type) []string {
+	segments := strings.Split(strings.Trim(path, "/"), "/")
+	if len(segments) == 0 {
+		return nil
+	}
+	group := segments[0]
+	leaf := segments[len(segments)-1]
+
+	switch tokenType {
+	case tokens.TypeColor:
+		// A colour is classified by its role wherever that role appears, so a
+		// client's own group (client/brand/500) lands beside the core palette.
+		for _, segment := range segments {
+			switch segment {
+			case "border", "outline", "ring", "stroke":
+				return []string{"STROKE_COLOR"}
+			case "foreground", "fg", "text", "content":
+				return []string{"TEXT_FILL"}
+			case "surface", "background", "bg", "fill":
+				return []string{"FRAME_FILL", "SHAPE_FILL"}
+			}
+		}
+		// Palette primitives and brand scales are legitimately usable as any
+		// colour, so they keep every colour scope rather than none.
+		return []string{"ALL_FILLS", "STROKE_COLOR"}
+	case tokens.TypeDimension, tokens.TypeNumber:
+		switch group {
+		case "borderRadius", "radius", "corner":
+			return []string{"CORNER_RADIUS"}
+		case "spacing", "space", "gap", "density":
+			return []string{"GAP", "WIDTH_HEIGHT"}
+		case "size", "sizing", "dimension":
+			return []string{"WIDTH_HEIGHT"}
+		case "opacity":
+			return []string{"OPACITY"}
+		case "typography", "font", "text":
+			return typographyScopes(leaf)
+		case "border", "stroke":
+			return []string{"STROKE_FLOAT"}
+		}
+		return nil
+	case tokens.TypeFontFamily:
+		return []string{"FONT_FAMILY"}
+	case tokens.TypeFontWeight:
+		return []string{"FONT_WEIGHT"}
+	}
+	return nil
+}
+
+// typographyScopes maps a typography step to the text property it drives. The
+// step carries its scale in the same segment (fontSize-2xl), so the dimension
+// is read from the part before the scale.
+func typographyScopes(leaf string) []string {
+	dimension := leaf
+	if index := strings.IndexAny(leaf, "-."); index > 0 {
+		dimension = leaf[:index]
+	}
+	switch dimension {
+	case "fontSize", "size":
+		return []string{"FONT_SIZE"}
+	case "lineHeight", "leading":
+		return []string{"LINE_HEIGHT"}
+	case "letterSpacing", "tracking":
+		return []string{"LETTER_SPACING"}
+	case "paragraphSpacing":
+		return []string{"PARAGRAPH_SPACING"}
+	case "fontWeight", "weight":
+		return []string{"FONT_WEIGHT"}
+	}
+	return nil
 }
