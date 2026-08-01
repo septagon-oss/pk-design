@@ -94,11 +94,25 @@ type Node struct {
 	Name          string                       `json:"name"`
 	Classes       string                       `json:"classes,omitempty"`
 	ClassBindings map[string]map[string]string `json:"class_bindings,omitempty"`
-	Text          string                       `json:"text,omitempty"`
-	Slot          string                       `json:"slot,omitempty"`
-	AssetRef      string                       `json:"asset_ref,omitempty"`
-	Props         map[string]any               `json:"props,omitempty"`
-	Children      []Node                       `json:"children,omitempty"`
+	// Style carries resolved CSS declarations for a node whose appearance
+	// cannot be stated in utilities.
+	//
+	// Classes is a closed vocabulary: a product that owns its stylesheet
+	// paints a 13px font or a 50% radius that no utility names, and a
+	// contract restating it in the nearest available class describes a
+	// component nobody ships. Style is how such a node says what it actually
+	// paints, resolved from the stylesheet rather than approximated.
+	//
+	// It is not an alternative styling language to be authored by hand.
+	// Anything expressible in Classes belongs there, where it stays legible
+	// and portable; Style exists for what the vocabulary cannot reach, and is
+	// meant to be derived from the stylesheet that already defines it.
+	Style    map[string]string `json:"style,omitempty"`
+	Text     string            `json:"text,omitempty"`
+	Slot     string            `json:"slot,omitempty"`
+	AssetRef string            `json:"asset_ref,omitempty"`
+	Props    map[string]any    `json:"props,omitempty"`
+	Children []Node            `json:"children,omitempty"`
 }
 
 // ExampleContract declares the exact viewport and mode in which one authored
