@@ -57,6 +57,7 @@ func testDescriptor(id string) components.Descriptor {
 	return components.Descriptor{
 		ID:       id,
 		Category: components.CategoryAtom,
+		Tags:     []string{"action", "control"},
 		Props: []components.Prop{
 			{Name: "tone", Type: components.PropEnum, EnumValues: []string{"brand", "neutral"}, Default: "brand"},
 		},
@@ -155,8 +156,11 @@ func TestCatalogReadsAreDefensiveCopies(t *testing.T) {
 	}
 	descriptor.Props[0].EnumValues[0] = "mutated"
 	descriptor.Anatomy[0].Tokens[0] = "mutated"
+	descriptor.Tags[0] = "mutated"
 	componentAgain, _ := catalog.Component("button.primary")
-	if componentAgain.Props[0].EnumValues[0] != "brand" || componentAgain.Anatomy[0].Tokens[0] != "color.surface.primary" {
+	if componentAgain.Props[0].EnumValues[0] != "brand" ||
+		componentAgain.Anatomy[0].Tokens[0] != "color.surface.primary" ||
+		componentAgain.Tags[0] != "action" {
 		t.Fatalf("Component() returned aliased data: %#v", componentAgain)
 	}
 }

@@ -21,6 +21,7 @@ func validDescriptor() Descriptor {
 		Category:    CategoryAtom,
 		Description: " Action trigger ",
 		ModuleID:    "design_core",
+		Tags:        []string{" action ", "control", "action"},
 		Props: []Prop{
 			{
 				Name:        "tone",
@@ -68,6 +69,9 @@ func TestNormalize(t *testing.T) {
 	if normalized.SourceOfTruth != SourceDefinition {
 		t.Fatalf("SourceOfTruth = %q; want %q", normalized.SourceOfTruth, SourceDefinition)
 	}
+	if !slices.Equal(normalized.Tags, []string{"action", "control"}) {
+		t.Fatalf("Tags = %#v", normalized.Tags)
+	}
 	if !slices.Equal([]string{normalized.Props[0].Name, normalized.Props[1].Name}, []string{"disabled", "tone"}) {
 		t.Fatalf("Props not sorted: %#v", normalized.Props)
 	}
@@ -102,6 +106,7 @@ func TestNormalizeRejectsInvalid(t *testing.T) {
 		func() Descriptor { d := base; d.Category = "primitive"; return d }(),
 		func() Descriptor { d := base; d.SourceOfTruth = "wiki"; return d }(),
 		func() Descriptor { d := base; d.ModuleID = "bad module"; return d }(),
+		func() Descriptor { d := base; d.Tags = []string{"bad tag"}; return d }(),
 		func() Descriptor { d := base; d.Props = []Prop{{Type: PropString}}; return d }(),
 		func() Descriptor { d := base; d.Props = []Prop{{Name: "label.part", Type: PropString}}; return d }(),
 		func() Descriptor { d := base; d.Props = []Prop{{Name: "label", Type: "text"}}; return d }(),

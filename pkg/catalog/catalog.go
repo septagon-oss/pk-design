@@ -366,6 +366,7 @@ func copyDescriptor(value components.Descriptor) components.Descriptor {
 		SourceOfTruth:  value.SourceOfTruth,
 		Description:    value.Description,
 		ModuleID:       value.ModuleID,
+		Tags:           slices.Clone(value.Tags),
 		Props:          slices.Clone(value.Props),
 		Slots:          slices.Clone(value.Slots),
 		Variants:       slices.Clone(value.Variants),
