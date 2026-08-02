@@ -153,6 +153,7 @@ type Descriptor struct {
 	SourceOfTruth  SourceOfTruth
 	Description    string
 	ModuleID       string
+	Tags           []string
 	Props          []Prop
 	Slots          []Slot
 	Variants       []Variant
@@ -192,6 +193,9 @@ func (d Descriptor) Normalize() (Descriptor, error) {
 		return Descriptor{}, fmt.Errorf("component %q module ID %q is invalid", d.ID, d.ModuleID)
 	}
 	var err error
+	if d.Tags, err = normalizeTags(d.Tags); err != nil {
+		return Descriptor{}, fmt.Errorf("component %q tags: %w", d.ID, err)
+	}
 	if d.Props, err = normalizeProps(d.Props); err != nil {
 		return Descriptor{}, fmt.Errorf("component %q props: %w", d.ID, err)
 	}
@@ -209,6 +213,27 @@ func (d Descriptor) Normalize() (Descriptor, error) {
 	}
 	d.Metadata = normalizeStringMap(d.Metadata)
 	return d, nil
+}
+
+func normalizeTags(values []string) ([]string, error) {
+	out := make([]string, 0, len(values))
+	seen := map[string]struct{}{}
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value == "" {
+			continue
+		}
+		if !validIdentifier(value) {
+			return nil, fmt.Errorf("tag %q is invalid", value)
+		}
+		if _, exists := seen[value]; exists {
+			continue
+		}
+		seen[value] = struct{}{}
+		out = append(out, value)
+	}
+	slices.Sort(out)
+	return out, nil
 }
 
 func normalizeProps(props []Prop) ([]Prop, error) {
