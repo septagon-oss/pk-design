@@ -50,7 +50,11 @@ type Variable struct {
 	Description string            `json:"description,omitempty"`
 	Values      map[string]any    `json:"values,omitempty"`
 	Aliases     map[string]string `json:"aliases,omitempty"`
-	Binding     Binding           `json:"binding"`
+	// Scopes limits where Figma offers this variable. Empty means every scope,
+	// which is Figma's own default and the right answer for a token whose
+	// taxonomy we do not recognise.
+	Scopes  []string `json:"scopes,omitempty"`
+	Binding Binding  `json:"binding"`
 }
 
 // Binding maps Figma collection modes back to exact snapshot coordinates and
