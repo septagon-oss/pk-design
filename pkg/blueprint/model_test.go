@@ -19,9 +19,11 @@ func TestDefinitionSerializesNativeSemanticNodesWithoutRasterPayloads(t *testing
 		SourceOfTruth:    SourceDefinition,
 		CanonicalExample: "default",
 		Root: &Node{
-			Kind:    NodeFrame,
-			Name:    "Button",
-			Classes: "inline-flex bg-surface-brand",
+			Kind:              NodeFrame,
+			Name:              "Button",
+			Classes:           "inline-flex bg-surface-brand",
+			ClassBindings:     map[string]map[string]string{"tone": {"danger": "bg-surface-danger"}},
+			ClassBindingOrder: []string{"tone"},
 			Children: []Node{{
 				Kind: NodeText,
 				Name: "Label",
@@ -42,5 +44,8 @@ func TestDefinitionSerializesNativeSemanticNodesWithoutRasterPayloads(t *testing
 	if !strings.Contains(payload, `"kind":"frame"`) ||
 		!strings.Contains(payload, `"kind":"text"`) {
 		t.Fatalf("blueprint lost semantic native nodes: %s", payload)
+	}
+	if !strings.Contains(payload, `"class_binding_order":["tone"]`) {
+		t.Fatalf("blueprint lost authored class-binding precedence: %s", payload)
 	}
 }

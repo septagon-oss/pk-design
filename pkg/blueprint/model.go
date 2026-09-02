@@ -90,10 +90,14 @@ type Asset struct {
 // vocabulary resolved by adapters; Props carry explicit conditional and
 // binding instructions. Nodes never contain screenshots.
 type Node struct {
-	Kind          NodeKind                     `json:"kind"`
-	Name          string                       `json:"name"`
-	Classes       string                       `json:"classes,omitempty"`
-	ClassBindings map[string]map[string]string `json:"class_bindings,omitempty"`
+	Kind    NodeKind `json:"kind"`
+	Name    string   `json:"name"`
+	Classes string   `json:"classes,omitempty"`
+	// ClassBindings carries conditional utility classes keyed by the authored
+	// property and value. ClassBindingOrder is the CSS-cascade order in which
+	// those property bindings are applied; maps alone cannot preserve it.
+	ClassBindings     map[string]map[string]string `json:"class_bindings,omitempty"`
+	ClassBindingOrder []string                     `json:"class_binding_order,omitempty"`
 	// Style carries resolved CSS declarations for a node whose appearance
 	// cannot be stated in utilities.
 	//
